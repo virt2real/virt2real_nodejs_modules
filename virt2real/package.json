@@ -1,0 +1,21 @@
+{
+  "name": "virt2real",
+  "description": "Virt2real NodeJS library",
+  "version": "0.0.1",
+  "author": {
+    "name": "Gol",
+    "email": "hypergol@gmail.com"
+  },
+  "main": "index",
+  "keywords": [
+    "virt2real"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/virt2real/virt2real_nodejs_modules.git"
+  },
+  "readme": "",
+  "readmeFilename": "README.md",
+  "_id": "virt2real@0.0.1",
+  "_from": "virt2real@"
+}

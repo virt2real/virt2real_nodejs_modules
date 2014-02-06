@@ -1,0 +1,21 @@
+{
+  "name": "motorshield",
+  "description": "Virt2real Motorshield NodeJS library",
+  "version": "0.0.1",
+  "author": {
+    "name": "Gol",
+    "email": "hypergol@gmail.com"
+  },
+  "main": "motorshield",
+  "keywords": [
+    "motorshield"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/virt2real/virt2real_nodejs_modules.git"
+  },
+  "readme": "",
+  "readmeFilename": "README.md",
+  "_id": "motorshield@0.0.1",
+  "_from": "motorshield@"
+}
