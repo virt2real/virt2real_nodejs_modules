@@ -9,7 +9,7 @@ var period_external = 4095;
 var address;
 
 /* max voltage */
-var REF_VOLTAGE = 58;
+var REF_VOLTAGE = 20;
 
 /* set I2C address */
 exports.setAddress = function (addr) {
