@@ -1,5 +1,10 @@
+//fs = require('fs');
+//var pins_driver = fs.createWriteStream("/dev/v2r_pins");
+
 fs = require('fs');
-var pins_driver = fs.createWriteStream("/dev/v2r_pins");
+fh_export = fs.openSync("/dev/v2r_pins", "w", 0644);
+
+
 var extpwm_driver;
 
 /* period for PWMs */
@@ -20,10 +25,15 @@ exports.setAddress = function (addr) {
 /* motorshield init */
 exports.init = function () {
 
-	pins_driver.write("set con 43 pwm0");
-	pins_driver.write("set con 44 pwm1");
-	pins_driver.write("set con 19 pwm2");
-	pins_driver.write("set con 42 pwm3");
+	//pins_driver.write("set con 43 pwm0");
+	//pins_driver.write("set con 44 pwm1");
+	//pins_driver.write("set con 19 pwm2");
+	//pins_driver.write("set con 42 pwm3");
+
+	fs.writeSync(fh_export, "set con 43 pwm0", null);
+	fs.writeSync(fh_export, "set con 44 pwm1", null);
+	fs.writeSync(fh_export, "set con 19 pwm2", null);
+	fs.writeSync(fh_export, "set con 42 pwm3", null);
 
 	/* init external pwm*/
 	fs.writeFileSync("/sys/bus/i2c/devices/1-00" + address.toString(16) + "/init", "1");
@@ -142,7 +152,8 @@ exports.J1.setSpeed = function(id, value) {
 		buffer[3] = (speed >> 8) & 0xFF;
 		buffer[4] = period & 0xFF;
 		buffer[5] = (period >> 8) & 0xFF;
-		pins_driver.write(buffer);
+		//pins_driver.write(buffer);
+		fs.writeSync(fh_export, buffer, null, 6);
 
 	} else
 
@@ -175,8 +186,10 @@ exports.J1.setDirection = function(id, val1, val2) {
 		buffer1[0] = 1;
 		buffer1[1] = J1[id].dir2;
 		buffer1[2] = 1 | (val2 << 1);
-		pins_driver.write(buffer);
-		pins_driver.write(buffer1);
+		//pins_driver.write(buffer);
+		//pins_driver.write(buffer1);
+		fs.writeSync(fh_export, buffer, null, 3);
+		fs.writeSync(fh_export, buffer1, null, 3);
 }
 
 
