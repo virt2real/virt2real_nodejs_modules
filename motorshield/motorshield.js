@@ -261,5 +261,51 @@ var J16 = [
 
 exports.J16 = J16;
 exports.J16.setSpeed = function(id, value) {
-	console.log(J16[id].name + " " + id + " " + value);
+
+	var speed;
+
+	if (J16[id].type == 1) {
+
+		speed = parseInt(period_external * value / 100);
+		var val = (speed > 127) ? 1 : 0;
+
+		var buffer = new Buffer(3);
+		buffer[0] = 1;
+		buffer[1] = J16[id].pin;
+		buffer[2] = val << 1 | 1;
+		fs.writeSync(fh_export, buffer, null, 3);
+
+	} else
+
+	if (J16[id].type == 2) {
+
+		if (value)
+			speed = parseInt(period_external * value / 100);
+		else 
+			speed = 0;
+
+		var buffer = new Buffer(6);
+		buffer[0] = 1;
+		buffer[1] = J16[id].pwm;
+		buffer[2] = 0;
+		buffer[3] = 0;
+		buffer[4] = speed & 0xFF;
+		buffer[5] = (speed >> 8) & 0xFF;
+		if (extpwm_driver)
+			extpwm_driver.write(buffer);
+	}
+
+}
+
+exports.J16.getSpeed = function(id, value) {
+
+	if (J16[id].type == 1) {
+
+		var val = fs.readFileSync("/proc/v2r_pins/" + J16[id].pin);
+		return (val[0]==48) ? 0 : 1;
+
+	} else
+
+	if (J16[id].type == 2) {
+	}
 }
