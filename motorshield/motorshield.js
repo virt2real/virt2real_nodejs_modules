@@ -1,15 +1,16 @@
-//fs = require('fs');
-//var pins_driver = fs.createWriteStream("/dev/v2r_pins");
-
 fs = require('fs');
 fh_export = fs.openSync("/dev/v2r_pins", "w", 0644);
-
 
 var extpwm_driver;
 
 /* period for PWMs */
 var period = 1190;
 var period_external = 4095;
+
+/* freq divider for external pwm */
+var divider = 50;
+var freq = parseInt(25000000 / (divider + 1) / 4096);
+var tic =  1 / freq / 4096;
 
 var address;
 
@@ -22,13 +23,17 @@ exports.setAddress = function (addr) {
 	extpwm_driver = fs.createWriteStream("/sys/bus/i2c/devices/1-00" + address.toString(16) + "/any");
 }
 
+/* set I2C PWM divider */
+exports.setDivider = function (value) {
+	divider = value;
+	freq = parseInt(25000000 / (divider + 1) / 4096);
+	tic =  1 / freq / 4096;
+
+	console.log("freq divider set to " + value);
+}
+
 /* motorshield init */
 exports.init = function () {
-
-	//pins_driver.write("set con 43 pwm0");
-	//pins_driver.write("set con 44 pwm1");
-	//pins_driver.write("set con 19 pwm2");
-	//pins_driver.write("set con 42 pwm3");
 
 	fs.writeSync(fh_export, "set con 43 pwm0", null);
 	fs.writeSync(fh_export, "set con 44 pwm1", null);
@@ -40,6 +45,12 @@ exports.init = function () {
 
 	/* turn off sleep on external pwm*/
 	fs.writeFileSync("/sys/bus/i2c/devices/1-00" + address.toString(16) + "/sleep", "0");
+
+	/* set default limits for servos */
+	for (var i = 1; i <= 8; i++) {
+		exports.J17.setLimits (i, 600, 2800, 180);
+	}
+
 }
 
 /* get motorshield voltage from ADC0*/
@@ -152,7 +163,6 @@ exports.J1.setSpeed = function(id, value) {
 		buffer[3] = (speed >> 8) & 0xFF;
 		buffer[4] = period & 0xFF;
 		buffer[5] = (period >> 8) & 0xFF;
-		//pins_driver.write(buffer);
 		fs.writeSync(fh_export, buffer, null, 6);
 
 	} else
@@ -186,8 +196,6 @@ exports.J1.setDirection = function(id, val1, val2) {
 		buffer1[0] = 1;
 		buffer1[1] = J1[id].dir2;
 		buffer1[2] = 1 | (val2 << 1);
-		//pins_driver.write(buffer);
-		//pins_driver.write(buffer1);
 		fs.writeSync(fh_export, buffer, null, 3);
 		fs.writeSync(fh_export, buffer1, null, 3);
 }
@@ -308,4 +316,168 @@ exports.J16.getSpeed = function(id, value) {
 
 	if (J16[id].type == 2) {
 	}
+}
+
+
+/* Servo Motors */
+
+var J17 = [
+	{
+		"id": 0,
+		"name": "FAKE",
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+	{
+		"id": 1,
+		"name": "SERVO1",
+		"pwm": 0,
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+	{
+		"id": 2,
+		"name": "SERVO2",
+		"pwm": 1,
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+	{
+		"id": 3,
+		"name": "SERVO3",
+		"pwm": 2,
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+	{
+		"id": 4,
+		"name": "SERVO4",
+		"pwm": 3,
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+	{
+		"id": 5,
+		"name": "SERVO5",
+		"pwm": 4,
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+	{
+		"id": 6,
+		"name": "SERVO6",
+		"pwm": 5,
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+	{
+		"id": 7,
+		"name": "SERVO7",
+		"pwm": 6,
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+	{
+		"id": 8,
+		"name": "SERVO8",
+		"pwm": 7,
+		"min": 0,
+		"max": 0,
+		"min_abs": 0,
+		"max_abs": 0,
+		"positions": 0,
+		"scale": 0,
+		"value": 0,
+		"value_abs": 0
+	},
+];
+
+exports.J17 = J17;
+
+
+exports.J17.setLimits = function(id, minimal, maximal, positions) {
+	J17[id].min = minimal;
+	J17[id].max = maximal;
+	J17[id].positions = positions;
+
+	J17[id].min_abs = parseInt(minimal / 1000000 / tic);
+	J17[id].max_abs = parseInt(maximal / 1000000 / tic);
+
+	J17[id].scale = (J17[id].max_abs - J17[id].min_abs) / J17[id].positions;
+
+}
+
+
+exports.J17.setPos = function(id, value) {
+
+	if (value < 0) value = 0;
+	if (value > (J17[id].positions - 1) ) value = J17[id].positions - 1;
+
+	var duty = parseInt(J17[id].min_abs + J17[id].scale * value);
+
+	J17[id].value = value;
+	J17[id].value_abs = duty;
+
+	var buffer = new Buffer(6);
+	buffer[0] = 1;
+	buffer[1] = J17[id].pwm;
+	buffer[2] = 0;
+	buffer[3] = 0;
+	buffer[4] = duty & 0xFF;
+	buffer[5] = (duty >> 8) & 0xFF;
+	if (extpwm_driver)
+		extpwm_driver.write(buffer);
+
+}
+
+exports.J17.getPos = function(id) {
+	return J17[id].value;
 }
