@@ -28,9 +28,19 @@ exports.setDivider = function (value) {
 	divider = value;
 	freq = parseInt(25000000 / (divider + 1) / 4096);
 	tic =  1 / freq / 4096;
-
+	fs.writeFileSync("/sys/bus/i2c/devices/1-00" + address.toString(16) + "/freq", divider);
 	console.log("freq divider set to " + value);
 }
+
+/* set I2C PWM frequency */
+exports.setFreq = function (value) {
+	freq = value;
+	divider = Math.round(25000000 / (4096 * freq)) -1;
+	tic =  1 / freq / 4096;
+	fs.writeFileSync("/sys/bus/i2c/devices/1-00" + address.toString(16) + "/freq", divider);
+	console.log("freq set to " + value);
+}
+
 
 /* motorshield init */
 exports.init = function () {
