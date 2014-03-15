@@ -20,7 +20,8 @@ var REF_VOLTAGE = 20;
 /* set I2C address */
 exports.setAddress = function (addr) {
 	address = parseInt(addr);
-	extpwm_driver = fs.createWriteStream("/sys/bus/i2c/devices/1-00" + address.toString(16) + "/any");
+	//extpwm_driver = fs.createWriteStream("/sys/bus/i2c/devices/1-00" + address.toString(16) + "/any");
+    extpwm_driver = fs.openSync("/sys/bus/i2c/devices/1-00" + address.toString(16) + "/any", "w", 0644);
 }
 
 /* set I2C PWM divider */
@@ -192,7 +193,8 @@ exports.J1.setSpeed = function(id, value) {
 		buffer[4] = speed & 0xFF;
 		buffer[5] = (speed >> 8) & 0xFF;
 		if (extpwm_driver)
-			extpwm_driver.write(buffer);
+			//extpwm_driver.write(buffer);
+			fs.writeSync(extpwm_driver, buffer, 0, buffer.length);
 	}
 }
 
@@ -310,7 +312,8 @@ exports.J16.setSpeed = function(id, value) {
 		buffer[4] = speed & 0xFF;
 		buffer[5] = (speed >> 8) & 0xFF;
 		if (extpwm_driver)
-			extpwm_driver.write(buffer);
+			//extpwm_driver.write(buffer);
+			fs.writeSync(extpwm_driver, buffer, 0, buffer.length);
 	}
 
 }
@@ -484,7 +487,8 @@ exports.J17.setPos = function(id, value) {
 	buffer[4] = duty & 0xFF;
 	buffer[5] = (duty >> 8) & 0xFF;
 	if (extpwm_driver)
-		extpwm_driver.write(buffer);
+		//extpwm_driver.write(buffer);
+		fs.writeSync(extpwm_driver, buffer, 0, buffer.length);
 
 }
 
